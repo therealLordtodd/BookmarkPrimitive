@@ -2,7 +2,7 @@
 
 This primitive is a member of the Document Editor primitive family. It provides bookmark anchors, named destinations, auto-regeneration, and cross-reference support for document-style apps.
 
-**Note:** BookmarkPrimitive is one of three primitives (with CommentPrimitive and TrackChangesPrimitive) that independently implement an **anchor pattern**. See [family-level convergence question](../docs/plans/2026-04-19-document-editor-dependency-audit.md#6-pending-coordinated-changes).
+**Note:** BookmarkPrimitive is one of three primitives (with CommentPrimitive and TrackChangesPrimitive) that independently implement an **anchor pattern**. See [family-level convergence question](../RichTextEditorKit/docs/plans/2026-04-19-document-editor-dependency-audit.md#6-pending-coordinated-changes).
 
 ## Conventions This Primitive Participates In
 
@@ -30,7 +30,7 @@ This primitive is a member of the Document Editor primitive family. It provides 
 1. **Anchor model changes**: also consider whether the change should unify with CommentPrimitive's and TrackChangesPrimitive's anchor models (family convergence question — §6 of dep audit).
 2. Changes to named-destination resolution: affects cross-references in DocumentPrimitive; hosts depending on stable destinations may see regression.
 3. Auto-regeneration behavior: subtle semantic change; document explicitly.
-4. Consult [dependency audit](../docs/plans/2026-04-19-document-editor-dependency-audit.md).
+4. Consult [dependency audit](../RichTextEditorKit/docs/plans/2026-04-19-document-editor-dependency-audit.md).
 5. Document ripple impact in the commit/PR.
 
 ## Scope of Membership

@@ -18,6 +18,10 @@ BookmarkPrimitive owns named anchors, auto-generated bookmark regeneration, cros
 - Add `BookmarkStoreTests` for mutation, regeneration, and cross-reference behavior.
 - Add model Codable/equality coverage in `ModelTests`.
 
+## UI Posture
+
+No UI surface — pure value-type primitive (`Bookmark`, `BookmarkAnchor`, `BookmarkStore`, `BookmarkPositionResolver`) with no SwiftUI views. Reader chrome and bookmark presentation belong to consumers. Theme & HIG audit: N/A.
+
 ---
 
 ## Family Membership — Document Editor

@@ -1,5 +1,21 @@
 # BookmarkPrimitive Working Guide
 
+## Xcode Build Stall Recovery
+
+If an Xcode or `xcodebuild` build appears stalled with no useful progress, run the global build doctor before rebooting:
+
+```sh
+xcode-build-doctor
+```
+
+When it reports old stuck compiler probes for this project, clear only this project's stuck build-service tree:
+
+```sh
+xcode-build-doctor --project "BookmarkPrimitive" --sample --fix
+```
+
+Use `--dry-run` first when other legitimate builders may be active. Avoid `--all --fix` unless Todd explicitly wants every active Xcode build stopped. If the doctor reports no stuck probes, investigate the build normally (compiler/package/cache/project error).
+
 ## Purpose
 BookmarkPrimitive owns named anchors, auto-generated bookmark regeneration, cross-reference resolution, and observable bookmark mutations.
 

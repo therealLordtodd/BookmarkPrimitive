@@ -49,6 +49,10 @@ BookmarkPrimitive owns named anchors, auto-generated bookmark regeneration, cros
 
 No UI surface — pure value-type primitive (`Bookmark`, `BookmarkAnchor`, `BookmarkStore`, `BookmarkPositionResolver`) with no SwiftUI views. Reader chrome and bookmark presentation belong to consumers. Theme & HIG audit: N/A.
 
+## Security Posture
+
+N/A — no security surface. Pure value-type primitive with no credentials, network calls, persistence, PII, cryptography, or process invocation. Reviewed 2026-05-26 (Security audit round 2).
+
 ---
 
 ## Family Membership — Document Editor

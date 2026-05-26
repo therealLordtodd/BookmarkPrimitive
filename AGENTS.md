@@ -53,6 +53,36 @@ No UI surface — pure value-type primitive (`Bookmark`, `BookmarkAnchor`, `Book
 
 N/A — no security surface. Pure value-type primitive with no credentials, network calls, persistence, PII, cryptography, or process invocation. Reviewed 2026-05-26 (Security audit round 2).
 
+## AI Integration Contract
+
+(Adopts the [AI-Equal Primitive Convention](../CONVENTIONS/ai-equal-primitive-convention.md) **v2.0**. Cat 1 — value-type vocabulary with an in-process observable store; no agent-controllable workflow surface.)
+
+This primitive is value vocabulary for named anchors and cross-references plus a small in-process `BookmarkStore`. It has no UI, no diagnostics worth a logger lane, no network, and no host-grade workflow — agents drive bookmarks through the document host's own surfaces.
+
+### What's already agent-friendly
+
+- **`Bookmark`, `BookmarkAnchor`, `BookmarkCrossReference` are `Sendable` + `Codable` + `Hashable`.** Agents round-trip bookmark records cleanly and compose by value.
+- **`BookmarkStore` emits structured `BookmarkMutation` events.** Agent consumers observe mutations directly rather than diffing snapshots.
+- **`BookmarkPositionResolver` is a protocol seam.** Agent test harnesses inject deterministic position resolvers without touching document chrome.
+
+### What is intentionally *not* integrated here
+
+`BookmarkPrimitive` does not link — and does not need — any of the portfolio's four AI-integration packages. Each has a concrete reason:
+
+| Package | Why not here |
+|---|---|
+| `LoggingKit` | No runtime diagnostics. Mutations and resolutions are pure functions plus an in-process store; the document host owns any logging surface around bookmark behavior. |
+| `AISeamsKit` | This is value vocabulary, not a workflow. Agents that want to add or jump to a bookmark drive the document host's reader surface, which composes BookmarkPrimitive internally. |
+| `Marple` | Behavior is fully determined by inputs (mutation in / event out); covered by unit tests. There is no probe-worthy long-lived state worth verifying through Marple. |
+| `Ansel` | Nothing to capture visually. |
+
+### Agent-usability trigger table
+
+| Thought | Reality |
+|---|---|
+| "Bookmarks should log when added/removed for audit trails." | The store emits `BookmarkMutation` events; hosts that want an audit trail subscribe and log at their boundary with the host's logger context. |
+| "Should `BookmarkStore` ship an `AISeams` surface?" | No — the host's reader surface already exposes bookmark actions through its own AISeams adapter. Wrapping the store here would double-register actions. |
+
 ---
 
 ## Family Membership — Document Editor

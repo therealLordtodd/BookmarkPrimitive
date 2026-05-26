@@ -16,6 +16,17 @@ xcode-build-doctor --project "BookmarkPrimitive" --sample --fix
 
 Use `--dry-run` first when other legitimate builders may be active. Avoid `--all --fix` unless Todd explicitly wants every active Xcode build stopped. If the doctor reports no stuck probes, investigate the build normally (compiler/package/cache/project error).
 
+## Repositories & Local Paths
+
+| Package | Repository | Local Path |
+|---------|------------|------------|
+| **BookmarkPrimitive** | https://github.com/therealLordtodd/BookmarkPrimitive.git | `/Users/todd/Building - Apple/Packages/BookmarkPrimitive` |
+
+## Build & Test
+
+- Build: `swift build`
+- Test: `swift test`
+
 ## Purpose
 BookmarkPrimitive owns named anchors, auto-generated bookmark regeneration, cross-reference resolution, and observable bookmark mutations.
 

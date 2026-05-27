@@ -47,7 +47,7 @@ BookmarkPrimitive owns named anchors, auto-generated bookmark regeneration, cros
 
 ## UI Posture
 
-No UI surface — pure value-type primitive (`Bookmark`, `BookmarkAnchor`, `BookmarkStore`, `BookmarkPositionResolver`) with no SwiftUI views. Reader chrome and bookmark presentation belong to consumers. Theme & HIG audit: N/A.
+No UI surface — pure value-type primitive (`Bookmark`, `BookmarkAnchor`, `BookmarkStore`, `BookmarkPositionResolver`) with no SwiftUI views. Reader chrome and bookmark presentation belong to consumers. Theme & HIG audit: N/A. Reviewed 2026-05-26 (Theme & HIG audit round 2).
 
 ## Security Posture
 

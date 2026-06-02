@@ -1,14 +1,16 @@
 # BookmarkPrimitive
+**Primitive** · [GitHub](https://github.com/therealLordtodd/BookmarkPrimitive)
 
-`BookmarkPrimitive` is a bookmark and cross-reference layer for document-style apps.
+> [!NOTE]
+> **TL;DR** — A bookmark and cross-reference layer for document-style apps: named anchors, an observable store, auto-regeneration, and reference resolution for things like "page 3" or "above / below". Reach for it when your app already has a document model and needs stable, app-owned bookmark concepts on top.
 
-It gives you named anchors, a small observable store, auto-generated bookmark regeneration, and cross-reference resolution for things like “page 3”, “Section 2”, or “above / below”.
+## Overview
 
-Use it when your app already has a document model and needs stable, app-owned bookmark concepts on top.
+`BookmarkPrimitive` gives a document-style app named anchors, a small observable store, auto-generated bookmark regeneration, and cross-reference resolution for references like "page 3", "Section 2", or "above / below".
 
-Do not use it as a document engine, layout engine, or navigation system by itself. This package tracks bookmarks; your host app still owns content IDs, scrolling, pagination, and rendering.
+Use it when your app already has a document model and needs stable, app-owned bookmark concepts on top. Don't use it as a document engine, layout engine, or navigation system by itself — this package tracks bookmarks; your host app still owns content IDs, scrolling, pagination, and rendering.
 
-## What The Package Gives You
+**What it gives you:**
 
 - `Bookmark` and `BookmarkAnchor` for named document anchors
 - `BookmarkStore` as the main `@MainActor` observable store
@@ -16,34 +18,20 @@ Do not use it as a document engine, layout engine, or navigation system by itsel
 - `BookmarkPositionResolver` so the host app can provide page numbers and relative position
 - mutation callbacks for bookmark UIs and editor side effects
 
-## When To Use It
+**Reach for it when:**
 
 - You have headings, sections, figures, or named anchors in a document
 - You want manual bookmarks plus auto-generated bookmarks
 - You want cross-references that can display title, number, page, or relative position
 - You want bookmark state owned by the app instead of buried inside editor UI
 
-## When Not To Use It
+**Skip it when:**
 
 - You want the package to scroll the document or move the cursor for you
 - You do not have stable content IDs in your document model
 - You need a full outline/navigation framework with persistence, syncing, and layout all bundled together
 
-## Install
-
-```swift
-dependencies: [
-    .package(path: "../BookmarkPrimitive"),
-]
-targets: [
-    .target(
-        name: "MyEditor",
-        dependencies: ["BookmarkPrimitive"]
-    )
-]
-```
-
-## Quick Start
+## 🚀 Quick start
 
 ```swift
 import BookmarkPrimitive
@@ -64,9 +52,52 @@ let resolved = store.resolve(
 print(resolved.displayText)
 ```
 
-## Concrete Examples
+## 🔌 Wiring it in
 
-### 1. Add, update, and remove manual bookmarks
+### 1. Add the dependency
+
+```swift
+dependencies: [
+    .package(path: "../BookmarkPrimitive"),
+]
+targets: [
+    .target(
+        name: "MyEditor",
+        dependencies: ["BookmarkPrimitive"]
+    )
+]
+```
+
+### 2. Treat `contentID` as your stable bridge to the document model
+
+That is the core integration seam. If your editor cannot give a heading, figure, or block a stable ID, bookmark behavior will always be fragile.
+
+### 3. Keep layout knowledge outside the package
+
+`BookmarkPrimitive` should not know how your pages, columns, or block positions are computed. Put that in a host-app `BookmarkPositionResolver`.
+
+### 4. Use auto-generated bookmarks for structure, manual bookmarks for intent
+
+Let headings and outlines rebuild automatically, while preserving user-created bookmarks across document changes.
+
+### 5. Keep bookmark rendering and navigation in the host app
+
+The package resolves display text. Your app should still decide how to scroll to a bookmark, highlight it, or present it in a sidebar.
+
+### 6. Persist bookmarks in your app's document model or store
+
+The package's model types are `Codable`, but there is no opinionated persistence system here. That keeps ownership with the app.
+
+## ⚠️ Caveats
+
+- `BookmarkStore` is `@MainActor`.
+- `pageNumber` and `aboveBelow` display styles depend on a host-provided `BookmarkPositionResolver`.
+- Without a resolver, those styles fall back to the bookmark name.
+- This package does not own navigation, rendering, or layout.
+
+## Examples
+
+### Add, update, and remove manual bookmarks
 
 ```swift
 let store = BookmarkStore()
@@ -81,7 +112,7 @@ store.update(bookmark.id, name: "Methods and Setup")
 store.remove(bookmark.id)
 ```
 
-### 2. Rebuild auto-generated bookmarks from document structure
+### Rebuild auto-generated bookmarks from document structure
 
 ```swift
 store.regenerate(from: [
@@ -95,7 +126,7 @@ let manual = store.manualBookmarks
 
 `regenerate(from:)` only replaces auto-generated bookmarks. Manual bookmarks stay intact.
 
-### 3. Resolve a title or numbered cross-reference
+### Resolve a title or numbered cross-reference
 
 ```swift
 let ref = CrossReference(
@@ -109,7 +140,7 @@ print(resolved.displayText)
 
 If the bookmark metadata contains `"number"`, the display can become something like `2 Methods`.
 
-### 4. Add page numbers or “above / below” with a resolver
+### Add page numbers or "above / below" with a resolver
 
 ```swift
 struct LayoutResolver: BookmarkPositionResolver {
@@ -140,7 +171,7 @@ print(store.resolve(pageRef).displayText)
 print(store.resolve(relativeRef, from: BookmarkAnchor(contentID: "current-block")).displayText)
 ```
 
-### 5. Observe mutations for UI refresh or side effects
+### Observe mutations for UI refresh or side effects
 
 ```swift
 let observerID = store.addObserver { mutation in
@@ -159,38 +190,31 @@ let observerID = store.addObserver { mutation in
 store.removeObserver(observerID)
 ```
 
-## How To Wire It Into A Host App
+## 📋 Reference
 
-### 1. Treat `contentID` as your stable bridge to the document model
+### Public surface
 
-That is the core integration seam. If your editor cannot give a heading, figure, or block a stable ID, bookmark behavior will always be fragile.
+| Type | Why it matters |
+|---|---|
+| `Bookmark` | Named document anchor with metadata. |
+| `BookmarkAnchor` | Wraps a host-provided `contentID` — the stable bridge to your document model. |
+| `BookmarkStore` | The main `@MainActor` observable store. Owns add/update/remove, regeneration, resolution, and observers. |
+| `CrossReference` | A reference to a bookmark plus a `displayStyle`. |
+| `ResolvedReference` | The resolved result carrying `displayText`. |
+| `BookmarkPositionResolver` | Host-provided seam for page numbers and relative position. |
 
-### 2. Keep layout knowledge outside the package
+### Display styles
 
-`BookmarkPrimitive` should not know how your pages, columns, or block positions are computed. Put that in a host-app `BookmarkPositionResolver`.
+| Style | Renders |
+|---|---|
+| `.title` | The bookmark title. |
+| `.numberAndTitle` | Number + title (e.g. `2 Methods`) when metadata contains `"number"`. |
+| `.pageNumber` | Page number from the host `BookmarkPositionResolver`. |
+| `.aboveBelow` | Relative position ("above" / "below") from the host resolver. |
 
-### 3. Use auto-generated bookmarks for structure, manual bookmarks for intent
+### Platforms
 
-That split is one of the best parts of the package. Let headings and outlines rebuild automatically, while preserving user-created bookmarks across document changes.
-
-### 4. Keep bookmark rendering and navigation in the host app
-
-The package resolves display text. Your app should still decide how to scroll to a bookmark, highlight it, or present it in a sidebar.
-
-### 5. Persist bookmarks in your app’s document model or store
-
-The package’s model types are `Codable`, but there is no opinionated persistence system here. That is a good thing. It keeps ownership with the app.
-
-## Important Constraints
-
-- `BookmarkStore` is `@MainActor`
-- `pageNumber` and `aboveBelow` display styles depend on a host-provided `BookmarkPositionResolver`
-- Without a resolver, those styles fall back to the bookmark name
-- This package does not own navigation, rendering, or layout
-
-## Platform Support
-
-| Platform | Minimum Version |
-|----------|----------------|
+| Platform | Minimum |
+|---|---|
 | macOS | 15.0 |
 | iOS | 17.0 |
